@@ -53,7 +53,7 @@ jobs:
         uses: jdcargile/ms-teams-notification@v1.3
         with:
           # GitHub Token
-          github-token: '993aac66a82c6e570cc01ce6d4e0ec71e533e973'
+          github-token: ${{'993aac66a82c6e570cc01ce6d4e0ec71e533e973'}}
           # Microsoft Teams Webhook URI
           ms-teams-webhook-uri: 'https://awarelabs.webhook.office.com/webhookb2/6d192079-2d03-4cde-8016-9785f36366c7@ab5eb3d0-6067-40ee-b4c0-a2ce05dbf039/GitHubEnterprise/a64a3b50fc12464db16dae72eec3736b/af7ce161-2bd3-4c65-8dce-7e3c26a5fd71'
           # Message to be sent to Microsoft Teams channel
