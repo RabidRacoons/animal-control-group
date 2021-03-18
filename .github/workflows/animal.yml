@@ -10,12 +10,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      GitHubPackageFeedUrl: https://nuget.pkg.github.com/RabidRacoons/index.json
+      LogicProjectPath: ${{ github.WORKSPACE }}/AnimalAdoption.Common.Logic
+
     steps:
       - uses: actions/checkout@v2
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.x
+          source-url: ${{ env.GitHubPackageFeedUrl }}
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub automatically creates a GITHUB_TOKEN secret to use in your workflow
+
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
@@ -31,3 +39,9 @@ jobs:
         with:
           name: RabidRacoons Package
           path: ${{ env.Wap_Project_Directory }}\deploy
+
+      - name: Package up project
+        run: dotnet pack --configuration Release ${{ env.LogicProjectPath }}
+
+      - name: Push package to GitHub registry
+        run: dotnet nuget push ${{ env.LogicProjectPath }}/**/*.nupkg --skip-duplicate
