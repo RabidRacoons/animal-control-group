@@ -8,7 +8,7 @@ on:
     branches: [master]
 
 jobs:
-  build:
+  job1:
     runs-on: ubuntu-latest
 
     env:
@@ -17,6 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
@@ -27,8 +28,10 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
+      
       - name: Build
         run: dotnet build --no-restore
+      
       - name: Test
         run: dotnet test 'AnimalAdoption.Web.Portal.UnitTests/AnimalAdoption.Web.Portal.UnitTests.csproj' --no-build --verbosity normal
 
