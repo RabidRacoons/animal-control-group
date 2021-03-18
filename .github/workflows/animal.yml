@@ -80,3 +80,12 @@ jobs:
         with: 
          app-name: dev-animal-web-app
          # publish-profile: ${{ secrets.DEV_PUBLISH_PROFILE }}
+         
+      - name: retriveAZSecrets
+        uses: Azure/get-keyvault-secrets@v1
+        with:
+          keyvault: 'dev-animal-web-app-kv' 
+          secrets: 'GlobalPassword'
+        id: myGlobalPassword  
+          
+       
