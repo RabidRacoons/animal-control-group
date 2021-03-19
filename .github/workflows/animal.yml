@@ -65,12 +65,21 @@ jobs:
         with:
           # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
-
-      - uses: azure/appservice-settings@v1
+          
+          
+      - name: retriveAZSecrets
+        uses: Azure/get-keyvault-secrets@v1
+        with:
+          keyvault: 'dev-animal-web-app-kv' 
+          secrets: 'GlobalPassword'
+        id: myGlobalPassword  
+      
+      - name: Update settings
+        uses: azure/appservice-settings@v1
         with:
           app-name: 'dev-animal-web-app'
           # slot-name: 'staging'  # Optional and needed only if the settings have to be configured on the specific deployment slot
-          app-settings-json: '[{ "name": "GlobalPassword", "value": "${{ secrets.GLOBAL_PASSWORD }}", "slotSetting": false },{ "name": "SimulatedFailureChance", "value": "0", "slotSetting": false }]' 
+          app-settings-json: '[{ "name": "GlobalPassword", "value": "${{steps.myGlobalPassword.outputs.GlobalPassword}}", "slotSetting": false },{ "name": "SimulatedFailureChance", "value": "0", "slotSetting": false }]' 
           # connection-strings-json: '${{ secrets.CONNECTION_STRINGS }}'
           general-settings-json: '{"alwaysOn": "false", "webSocketsEnabled": "true"}' #'General configuration settings as Key Value pairs'
         id: settings
@@ -81,11 +90,5 @@ jobs:
          app-name: dev-animal-web-app
          # publish-profile: ${{ secrets.DEV_PUBLISH_PROFILE }}
          
-      - name: retriveAZSecrets
-        uses: Azure/get-keyvault-secrets@v1
-        with:
-          keyvault: 'dev-animal-web-app-kv' 
-          secrets: 'GlobalPassword'
-        id: myGlobalPassword  
           
        
