@@ -8,7 +8,7 @@ on:
     branches: [master]
 
 jobs:
- build:
+  build:
     runs-on: ubuntu-latest
 
     env:
@@ -133,7 +133,7 @@ jobs:
           
   Test:
     runs-on: windows-latest
-    #needs: [deploy]
+    needs: [deploy]
     env:
       ANIMAL_ADOPTION_FUNCTIONAL_TEST_PATH: https://dev-animal-web-app.azurewebsites.net
     
