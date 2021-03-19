@@ -58,7 +58,7 @@
             }
           },
           {
-            "objectId": "7cee5d52-fe1e-4e28-a327-f8eff079a321",
+            "objectId": "24521536-5bd0-420e-8924-bd10c0056e08",
             "tenantId": "[parameters('tenantGuid')]",
             "permissions": {
               "keys": [
