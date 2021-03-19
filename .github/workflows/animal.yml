@@ -44,11 +44,18 @@ jobs:
           name: RabidRacoons Package
           path: ${{ env.Wap_Project_Directory }}\deploy
 
+      - name: Upload ARM Template artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ARM Template
+          path: ./deploy.json
+          
       - name: Package up project
         run: dotnet pack --configuration Release ${{ env.LogicProjectPath }}
 
       - name: Push package to GitHub registry
         run: dotnet nuget push ${{ env.LogicProjectPath }}/**/*.nupkg --skip-duplicate
+
 
   deploy:
     runs-on: ubuntu-latest
@@ -60,6 +67,11 @@ jobs:
         with: 
          name: RabidRacoons Package
 
+      - name: Downloading ARM Template
+        uses: actions/download-artifact@v2
+        with: 
+         name: ARM Template
+         
       - name: Azure Login
         uses: Azure/login@v1
         with:
