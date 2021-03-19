@@ -122,7 +122,7 @@ jobs:
           # Specifies the name of the resource group deployment to create.
           # deploymentName: # optional
           # Supply deployment parameter values.
-          parameters: |
+          parameters: 
             resourceLocation=southeastasia
             tenantGuid=ab5eb3d0-6067-40ee-b4c0-a2ce05dbf039
             appServicePlanName=ASP-DevOps20210318team01dev-b285
