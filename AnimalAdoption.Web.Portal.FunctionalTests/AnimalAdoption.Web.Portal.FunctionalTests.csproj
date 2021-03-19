@@ -17,4 +17,9 @@
     <PackageReference Include="Selenium.WebDriver" Version="3.14.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="chromedriver.exe"> <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> </None>
+  </ItemGroup>
+  
+
 </Project>
