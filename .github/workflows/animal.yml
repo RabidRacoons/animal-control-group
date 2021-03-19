@@ -14,6 +14,7 @@ jobs:
     env:
       GitHubPackageFeedUrl: https://nuget.pkg.github.com/RabidRacoons/index.json
       LogicProjectPath: ${{ github.WORKSPACE }}/AnimalAdoption.Common.Logic
+    
 
     steps:
       - uses: actions/checkout@v2
@@ -44,11 +45,18 @@ jobs:
           name: RabidRacoons Package
           path: ${{ env.Wap_Project_Directory }}\deploy
 
+      - name: Upload ARM Template artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ARM Template
+          path: ./deploy.json
+          
       - name: Package up project
         run: dotnet pack --configuration Release ${{ env.LogicProjectPath }}
 
       - name: Push package to GitHub registry
         run: dotnet nuget push ${{ env.LogicProjectPath }}/**/*.nupkg --skip-duplicate
+
 
   deploy:
     runs-on: ubuntu-latest
@@ -60,13 +68,47 @@ jobs:
         with: 
          name: RabidRacoons Package
 
+      - name: Downloading ARM Template
+        uses: actions/download-artifact@v2
+        with: 
+         name: ARM Template
+         
       - name: Azure Login
         uses: Azure/login@v1
         with:
           # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
           
-          
+      - name: Deploy Azure Resource Manager (ARM) Template
+        uses: Azure/arm-deploy@v1
+        with:
+          # Provide the scope of the deployment. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'
+          scope: 'resourcegroup'
+          # Override the Subscription Id set by Azure Login.
+          subscriptionId: 'cfe96ac1-4cd0-40ad-9751-b18802bf8822'
+          # Specify the Id for the Management Group, only required for Management Group Deployments.
+          # managementGroupId: # optional
+          # Provide the target region, only required for management Group or Subscription deployments.
+          # region: # optional
+          # Provide the name of a resource group, only required for resource Group deployments.
+          resourceGroupName: 'DevOps-2021-03-18-team-01-dev'
+          # Specify the path or URL to the Azure Resource Manager template.
+          template: ./deploy.json
+          # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
+          deploymentMode: incremental
+          # Specifies the name of the resource group deployment to create.
+          # deploymentName: # optional
+          # Supply deployment parameter values.
+          parameters: 
+            resourceLocation=southeastasia
+            tenantGuid=ab5eb3d0-6067-40ee-b4c0-a2ce05dbf039
+            appServicePlanName=ASP-DevOps20210318team01dev-b285
+            keyVaultName=dev-animal-web-app-kv
+            webAppName=dev-animal-web-app
+            resourceGroupServicePrincipalManagedApplicationObjectId=7cee5d52-fe1e-4e28-a327-f8eff079a321 
+
+
+
       - name: retriveAZSecrets
         uses: Azure/get-keyvault-secrets@v1
         with:
@@ -89,6 +131,19 @@ jobs:
         with: 
          app-name: dev-animal-web-app
          # publish-profile: ${{ secrets.DEV_PUBLISH_PROFILE }}
-         
+
+
           
-       
+  Test:
+    runs-on: windows-latest
+    needs: [deploy]
+    env:
+      ANIMAL_ADOPTION_FUNCTIONAL_TEST_PATH: https://dev-animal-web-app.azurewebsites.net
+    
+
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: test1
+        run: dotnet test 'AnimalAdoption.Web.Portal.FunctionalTests\AnimalAdoption.Web.Portal.FunctionalTests.csproj' --verbosity normal
+
