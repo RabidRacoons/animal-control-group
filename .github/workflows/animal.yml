@@ -11,7 +11,7 @@ jobs:
  
           
   Test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     #needs: [deploy]
     env:
       ANIMAL_ADOPTION_FUNCTIONAL_TEST_PATH: https://dev-animal-web-app.azurewebsites.net
