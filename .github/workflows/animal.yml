@@ -118,10 +118,16 @@ jobs:
           # Specify the path or URL to the Azure Resource Manager template.
           template: ./deploy.json
           # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
-          # deploymentMode: # optional
+          deploymentMode: incremental
           # Specifies the name of the resource group deployment to create.
           # deploymentName: # optional
           # Supply deployment parameter values.
-          # parameters: # optional
+          parameters: |
+            resourceLocation=southeastasia
+            tenantGuid=ab5eb3d0-6067-40ee-b4c0-a2ce05dbf039
+            appServicePlanName=ASP-DevOps20210318team01dev-b285
+            keyVaultName=dev-animal-web-app-kv
+            webAppName=dev-animal-web-app
+            resourceGroupServicePrincipalManagedApplicationObjectId=7cee5d52-fe1e-4e28-a327-f8eff079a321
           
        
